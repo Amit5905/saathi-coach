@@ -38,6 +38,7 @@
   <p>Naye loan officers ke liye AI role-play coach · Gemini Live + Gemini</p>
 </header>
 <main>
+  <div id="err" class="card hidden" style="background:#fee2e2;color:#991b1b"></div>
 
   <div class="card" id="keyCard">
     <label for="apiKey">Gemini API key</label>
@@ -45,6 +46,7 @@
       <input id="apiKey" type="password" placeholder="Google AI Studio se API key paste karein" style="flex:1" />
       <button id="saveKey">Start</button>
     </div>
+    <p id="keyMsg" class="muted" style="font-weight:600"></p>
     <p class="muted">Key sirf is browser tab mein rehti hai (sessionStorage). Kisi server pe nahi jaati.</p>
   </div>
 
@@ -94,12 +96,18 @@
   <p class="muted">Demo prototype · Startup Buildathon India 2026 · Amit Sharma</p>
 </main>
 
+<script>
+  window.addEventListener("error", e => { const d=document.getElementById("err"); d.classList.remove("hidden"); d.textContent = "Error: " + (e.message || e); });
+  window.addEventListener("unhandledrejection", e => { const d=document.getElementById("err"); d.classList.remove("hidden"); d.textContent = "Error: " + (e.reason && e.reason.message || e.reason); });
+  setTimeout(() => { if (!window.__saathiReady) { const d=document.getElementById("err"); d.classList.remove("hidden"); d.textContent = "App load nahi hua. Page refresh karein (Chrome mein kholein)."; } }, 8000);
+</script>
 <script type="module">
-import { GoogleGenAI, Modality } from "https://esm.sh/@google/genai@1";
+import { GoogleGenAI, Modality } from "./genai.js";
 
+window.__saathiReady = true;
 // ---- Models (change here if Google renames them) ----
-const LIVE_MODEL = "gemini-2.5-flash-native-audio-preview-09-2025";
-const TEXT_MODEL = "gemini-2.5-flash";
+const LIVE_MODEL = "gemini-3.8-live";
+const TEXT_MODEL = "gemini-3.8-flash";
 
 // ---- Scenarios ----
 const SCENARIOS = {
@@ -137,7 +145,7 @@ $("saveKey").onclick = () => {
   if (!k) return alert("API key daalein");
   sessionStorage.setItem("gk", k); initAI(k);
 };
-function initAI(k) { ai = new GoogleGenAI({ apiKey: k }); $("keyCard").style.opacity = .6; }
+function initAI(k) { ai = new GoogleGenAI({ apiKey: k }); $("keyMsg").textContent = "✓ Key set ho gayi. Ab Practice mein scenario chunein aur Call shuru karein."; $("keyMsg").style.color = "var(--g)"; }
 
 // ---- Tabs ----
 const tabs = { tabPractice: "practice", tabScore: "score", tabAsk: "ask" };
@@ -231,7 +239,7 @@ $("startBtn").onclick = async () => {
     };
     srcNode.connect(processor); processor.connect(inCtx.destination);
     // borrower opens the conversation
-    session.sendClientContent({ turns: [{ role: "user", parts: [{ text: "(Officer aapke ghar pahunch gaya hai.)" }] }], turnComplete: true });
+    session.sendRealtimeInput({ text: "(Officer aapke ghar pahunch gaya hai. Aap baat shuru karein.)" });
     $("stopBtn").disabled = false;
   } catch (err) {
     console.error(err); setStatus("Error: " + err.message); $("startBtn").disabled = false;
@@ -264,7 +272,7 @@ const SCHEMA = {
   properties: {
     overall: { type: "integer" },
     criteria: { type: "array", items: { type: "object", properties: {
-      name: { type: "string" }, score: { type: "integer", nullable: true }, why: { type: "string" }, better_line: { type: "string" } },
+      name: { type: "string" }, score: { type: ["integer","null"] }, why: { type: "string" }, better_line: { type: "string" } },
       required: ["name", "why"] } },
     top_improvements: { type: "array", items: { type: "string" } },
     red_flags: { type: "array", items: { type: "string" } }
@@ -280,7 +288,7 @@ $("scoreBtn").onclick = async () => {
     const r = await ai.models.generateContent({
       model: TEXT_MODEL,
       contents: RUBRIC + "\n\nScenario: " + SCENARIOS[$("scenario").value].desc + "\n\nTRANSCRIPT:\n" + text,
-      config: { responseMimeType: "application/json", responseSchema: SCHEMA }
+      config: { responseMimeType: "application/json", responseJsonSchema: SCHEMA }
     });
     const d = JSON.parse(r.text);
     $("scoreOut").innerHTML = `

@@ -142,7 +142,7 @@ const $ = (id) => document.getElementById(id);
 
 // ---- Key ----
 // ---- Demo window: band hone ka time (IST) ----
-const DEMO_ENDS = new Date(Date.UTC(2026, 10, 5, 18, 30));
+const DEMO_ENDS = new Date(Date.UTC(2026, 10, 5, 20, 30));
 if (Date.now() > DEMO_ENDS.getTime()) {
   document.body.innerHTML = '<main style="max-width:520px;margin:15vh auto;text-align:center;font-family:system-ui"><h2>Saathi Coach demo band ho gaya hai</h2><p>Demo ka samay khatam. Dobara access ke liye Amit Sharma se sampark karein.</p></main>';
   throw new Error("demo closed");

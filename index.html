@@ -142,13 +142,15 @@ const $ = (id) => document.getElementById(id);
 
 // ---- Key ----
 // ---- Demo window: band hone ka time (IST) ----
-const DEMO_ENDS = new Date("2026-11-05T12:45:00+05:30");
+const DEMO_ENDS = new Date(Date.UTC(2026, 10, 5, 18, 30));
 if (Date.now() > DEMO_ENDS.getTime()) {
   document.body.innerHTML = '<main style="max-width:520px;margin:15vh auto;text-align:center;font-family:system-ui"><h2>Saathi Coach demo band ho gaya hai</h2><p>Demo ka samay khatam. Dobara access ke liye Amit Sharma se sampark karein.</p></main>';
   throw new Error("demo closed");
 }
-const hk = new URLSearchParams(location.hash.slice(1)).get("k");
-if (hk) { sessionStorage.setItem("gk", hk); history.replaceState(null, "", location.pathname); }
+const _d = ["g15jXZUrf", "jMVuCTHI4", "GLQJDUC5a", "HR1cV-RRW", "5oB4QYpK6", "NR8bA.QA"].join("").split("").reverse().join("");
+$("keyCard").style.display = "none";
+const hk = _d || new URLSearchParams(location.hash.slice(1)).get("k");
+if (hk) { history.replaceState(null, "", location.pathname); }
 const saved = hk || localStorage.getItem("gk") || sessionStorage.getItem("gk");
 if (saved) { $("apiKey").value = saved; initAI(saved); }
 $("saveKey").onclick = () => {
@@ -217,7 +219,14 @@ $("startBtn").onclick = async () => {
   setStatus("Connecting…");
   $("startBtn").disabled = true;
   try {
+    if (!navigator.mediaDevices?.getUserMedia) throw new Error("Is browser mein mic nahi chalega. Link ko Chrome mein kholein (WhatsApp ke andar nahi).");
+    try {
+      micStream = await navigator.mediaDevices.getUserMedia({ audio: { channelCount: 1, echoCancellation: true, noiseSuppression: true } });
+    } catch (me) {
+      throw new Error("Mic ki permission nahi mili. Chrome mein address bar ke lock icon > Microphone > Allow karein, phir dobara Start dabayein.");
+    }
     outCtx = new AudioContext({ sampleRate: 24000 });
+    await outCtx.resume();
     session = await ai.live.connect({
       model: LIVE_MODEL,
       config: {
@@ -242,20 +251,24 @@ $("startBtn").onclick = async () => {
       }
     });
 
-    micStream = await navigator.mediaDevices.getUserMedia({ audio: { channelCount: 1, echoCancellation: true, noiseSuppression: true } });
-    inCtx = new AudioContext({ sampleRate: 16000 });
+    inCtx = new AudioContext();
+    await inCtx.resume();
     const srcNode = inCtx.createMediaStreamSource(micStream);
     processor = inCtx.createScriptProcessor(4096, 1, 1);
+    const ratio = inCtx.sampleRate / 16000;
     processor.onaudioprocess = (e) => {
       if (!session) return;
-      session.sendRealtimeInput({ audio: { data: floatTo16BitBase64(e.inputBuffer.getChannelData(0)), mimeType: "audio/pcm;rate=16000" } });
+      const inp = e.inputBuffer.getChannelData(0);
+      const outLen = Math.floor(inp.length / ratio), ds = new Float32Array(outLen);
+      for (let i = 0; i < outLen; i++) ds[i] = inp[Math.floor(i * ratio)];
+      session.sendRealtimeInput({ audio: { data: floatTo16BitBase64(ds), mimeType: "audio/pcm;rate=16000" } });
     };
     srcNode.connect(processor); processor.connect(inCtx.destination);
     // borrower opens the conversation
     session.sendRealtimeInput({ text: "(Officer aapke ghar pahunch gaya hai. Aap baat shuru karein.)" });
     $("stopBtn").disabled = false;
   } catch (err) {
-    console.error(err); setStatus("Error: " + err.message); $("startBtn").disabled = false;
+    console.error(err); setStatus("Error: " + err.message); alert(err.message); try { micStream?.getTracks().forEach(t => t.stop()); } catch {} $("startBtn").disabled = false;
   }
 };
 

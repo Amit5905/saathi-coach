@@ -30,6 +30,7 @@
   .muted { color:var(--mut); font-size:13px; }
   .pill { display:inline-block; padding:4px 10px; border-radius:20px; background:#e6f4ee; color:var(--g); font-size:13px; }
   .live { background:var(--bad); color:#fff; }
+  .ghost{background:transparent;color:inherit;border:1px solid #ccc}
 </style>
 </head>
 <body>
@@ -45,9 +46,11 @@
     <div class="row">
       <input id="apiKey" type="password" placeholder="Google AI Studio se API key paste karein" style="flex:1" />
       <button id="saveKey">Start</button>
+      <button id="clearKey" class="ghost">Key hatayein</button>
     </div>
+    <label style="font-weight:400"><input type="checkbox" id="rememberKey" checked /> Is device pe key yaad rakhein</label>
     <p id="keyMsg" class="muted" style="font-weight:600"></p>
-    <p class="muted">Key sirf is browser tab mein rehti hai (sessionStorage). Kisi server pe nahi jaati.</p>
+    <p class="muted">Key sirf aapke browser mein save hoti hai (code ya GitHub pe nahi). Shared computer pe "Key hatayein" dabayein.</p>
   </div>
 
   <div class="tabs">
@@ -138,13 +141,15 @@ let transcript = []; // {who:'officer'|'borrower', text}
 const $ = (id) => document.getElementById(id);
 
 // ---- Key ----
-const saved = sessionStorage.getItem("gk");
+const saved = localStorage.getItem("gk") || sessionStorage.getItem("gk");
 if (saved) { $("apiKey").value = saved; initAI(saved); }
 $("saveKey").onclick = () => {
   const k = $("apiKey").value.trim();
   if (!k) return alert("API key daalein");
-  sessionStorage.setItem("gk", k); initAI(k);
+  if ($("rememberKey").checked) localStorage.setItem("gk", k); else { localStorage.removeItem("gk"); sessionStorage.setItem("gk", k); }
+  initAI(k);
 };
+$("clearKey").onclick = () => { localStorage.removeItem("gk"); sessionStorage.removeItem("gk"); $("apiKey").value = ""; ai = null; $("keyMsg").textContent = "Key hata di gayi."; $("keyMsg").style.color = ""; };
 function initAI(k) { ai = new GoogleGenAI({ apiKey: k }); $("keyMsg").textContent = "✓ Key set ho gayi. Ab Practice mein scenario chunein aur Call shuru karein."; $("keyMsg").style.color = "var(--g)"; }
 
 // ---- Tabs ----

@@ -36,21 +36,21 @@
 <body>
 <header>
   <h1>Saathi Coach</h1>
-  <p>Naye loan officers ke liye AI role-play coach · Gemini Live + Gemini</p>
+  <p>Naye loan officers ke liye AI role-play coach</p>
 </header>
 <main>
   <div id="err" class="card hidden" style="background:#fee2e2;color:#991b1b"></div>
 
   <div class="card" id="keyCard">
-    <label for="apiKey">Gemini API key</label>
+    <label for="apiKey">API key</label>
     <div class="row">
-      <input id="apiKey" type="password" placeholder="Google AI Studio se API key paste karein" style="flex:1" />
+      <input id="apiKey" type="password" placeholder="API key paste karein" style="flex:1" />
       <button id="saveKey">Start</button>
       <button id="clearKey" class="ghost">Key hatayein</button>
     </div>
     <label style="font-weight:400"><input type="checkbox" id="rememberKey" checked /> Is device pe key yaad rakhein</label>
     <p id="keyMsg" class="muted" style="font-weight:600"></p>
-    <p class="muted">Key sirf aapke browser mein save hoti hai (code ya GitHub pe nahi). Shared computer pe "Key hatayein" dabayein.</p>
+    <p class="muted">Key sirf aapke browser mein save hoti hai (kisi server pe nahi). Shared computer pe "Key hatayein" dabayein.</p>
   </div>
 
   <div class="tabs">
@@ -213,7 +213,7 @@ function stopPlayback() { playing.forEach(s => { try { s.stop(); } catch {} }); 
 
 // ---- Start / stop call ----
 $("startBtn").onclick = async () => {
-  if (!ai) return alert("Pehle Gemini API key daal kar Start dabayein");
+  if (!ai) return alert("Pehle API key daal kar Start dabayein");
   transcript = []; renderLog();
   const sc = SCENARIOS[$("scenario").value];
   setStatus("Connecting…");

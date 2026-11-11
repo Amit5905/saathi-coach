@@ -35,322 +35,373 @@
 </head>
 <body>
 <header>
-  <h1>Saathi Coach</h1>
-  <p>Naye loan officers ke liye AI role-play coach</p>
+<h1>Saathi Coach</h1>
+<p>Naye loan officers ke liye AI role-play coach</p>
 </header>
 <main>
-  <div id="err" class="card hidden" style="background:#fee2e2;color:#991b1b"></div>
-
-  <div class="card" id="keyCard">
-    <label for="apiKey">API key</label>
-    <div class="row">
-      <input id="apiKey" type="password" placeholder="API key paste karein" style="flex:1" />
-      <button id="saveKey">Start</button>
-      <button id="clearKey" class="ghost">Key hatayein</button>
-    </div>
-    <label style="font-weight:400"><input type="checkbox" id="rememberKey" checked /> Is device pe key yaad rakhein</label>
-    <p id="keyMsg" class="muted" style="font-weight:600"></p>
-    <p class="muted">Key sirf aapke browser mein save hoti hai (kisi server pe nahi). Shared computer pe "Key hatayein" dabayein.</p>
-  </div>
-
-  <div class="tabs">
-    <button id="tabPractice">🎙️ Practice</button>
-    <button id="tabScore" class="sec">📊 Scorecard</button>
-    <button id="tabAsk" class="sec">📄 Policy Saathi</button>
-  </div>
-
-  <!-- PRACTICE -->
-  <section id="practice" class="card">
-    <h2 style="margin-top:0">AI borrower ke saath role-play</h2>
-    <label for="scenario">Scenario chunein</label>
-    <select id="scenario"></select>
-    <p class="muted" id="scenarioDesc"></p>
-    <div class="row" style="margin-top:10px">
-      <button id="startBtn">▶ Call shuru karein</button>
-      <button id="stopBtn" class="sec" disabled>■ Call khatam</button>
-      <span id="status" class="pill">Ready</span>
-    </div>
-    <label>Baatcheet (live transcript)</label>
-    <div id="log"></div>
-    <div class="row" style="margin-top:10px">
-      <button id="scoreBtn" disabled>📊 Score karein</button>
-      <span class="muted">Call khatam karke score dekhein</span>
-    </div>
-  </section>
-
-  <!-- SCORE -->
-  <section id="score" class="card hidden">
-    <h2 style="margin-top:0">Compliance scorecard</h2>
-    <div id="scoreOut"><p class="muted">Pehle ek practice call karein, phir "Score karein" dabayein.</p></div>
-  </section>
-
-  <!-- ASK -->
-  <section id="ask" class="card hidden">
-    <h2 style="margin-top:0">Policy Saathi – document se jawab</h2>
-    <label for="pdf">Policy / KYC PDF upload karein (20 MB tak)</label>
-    <input id="pdf" type="file" accept="application/pdf" />
-    <label for="question">Sawaal</label>
-    <textarea id="question" rows="2" placeholder="Jaise: Pre-closure pe kitna charge lagta hai?"></textarea>
-    <div class="row" style="margin-top:10px"><button id="askBtn">Poochein</button></div>
-    <label>Jawab</label>
-    <div id="qaOut"></div>
-  </section>
-
-  <p class="muted">Demo prototype · Startup Buildathon India 2026 · Amit Sharma</p>
+<div id="err" class="card hidden" style="background:#fee2e2;color:#991b1b"></div>
+<div class="card" id="keyCard">
+<label for="apiKey">API key</label>
+<div class="row">
+<input id="apiKey" type="password" placeholder="API key paste karein" style="flex:1" />
+<button id="saveKey">Start</button>
+<button id="clearKey" class="ghost">Key hatayein</button>
+</div>
+<label style="font-weight:400"><input type="checkbox" id="rememberKey" checked /> Is device pe key yaad rakhein</label>
+<p id="keyMsg" class="muted" style="font-weight:600"></p>
+<p class="muted">Key sirf aapke browser mein save hoti hai (kisi server pe nahi). Shared computer pe "Key hatayein" dabayein.</p>
+</div>
+<div class="tabs">
+<button id="tabPractice">🎙️ Practice</button>
+<button id="tabScore" class="sec">📊 Scorecard</button>
+<button id="tabAsk" class="sec">📄 Policy Saathi</button>
+</div>
+<!-- PRACTICE -->
+<section id="practice" class="card">
+<h2 style="margin-top:0">AI borrower ke saath role-play</h2>
+<label for="scenario">Scenario chunein</label>
+<select id="scenario"></select>
+<p class="muted" id="scenarioDesc"></p>
+<div class="row" style="margin-top:10px">
+<button id="startBtn">▶ Call shuru karein</button>
+<button id="stopBtn" class="sec" disabled>■ Call khatam</button>
+<span id="status" class="pill">Ready</span>
+</div>
+<label>Baatcheet (live transcript)</label>
+<div id="log"></div>
+<div class="row" style="margin-top:10px">
+<button id="scoreBtn" disabled>📊 Score karein</button>
+<span class="muted">Call khatam karke score dekhein</span>
+</div>
+</section>
+<!-- SCORE -->
+<section id="score" class="card hidden">
+<h2 style="margin-top:0">Compliance scorecard</h2>
+<div id="scoreOut"><p class="muted">Pehle ek practice call karein, phir "Score karein" dabayein.</p></div>
+</section>
+<!-- ASK -->
+<section id="ask" class="card hidden">
+<h2 style="margin-top:0">Policy Saathi – document se jawab</h2>
+<label for="pdf">Policy / KYC PDF upload karein (20 MB tak)</label>
+<input id="pdf" type="file" accept="application/pdf" />
+<label for="question">Sawaal</label>
+<textarea id="question" rows="2" placeholder="Jaise: Pre-closure pe kitna charge lagta hai?"></textarea>
+<div class="row" style="margin-top:10px"><button id="askBtn">Poochein</button></div>
+<label>Jawab</label>
+<div id="qaOut"></div>
+</section>
+<p class="muted">Demo prototype · Startup Buildathon India 2026 · Amit Sharma</p>
 </main>
-
 <script>
-  window.addEventListener("error", e => { const d=document.getElementById("err"); d.classList.remove("hidden"); d.textContent = "Error: " + (e.message || e); });
-  window.addEventListener("unhandledrejection", e => { const d=document.getElementById("err"); d.classList.remove("hidden"); d.textContent = "Error: " + (e.reason && e.reason.message || e.reason); });
-  setTimeout(() => { if (!window.__saathiReady) { const d=document.getElementById("err"); d.classList.remove("hidden"); d.textContent = "App load nahi hua. Page refresh karein (Chrome mein kholein)."; } }, 8000);
+window.addEventListener("error", e => { const d=document.getElementById("err"); d.classList.remove("hidden"); d.textContent = "Error: " + (e.message || e); });
+window.addEventListener("unhandledrejection", e => { const d=document.getElementById("err"); d.classList.remove("hidden"); d.textContent = "Error: " + (e.reason && e.reason.message || e.reason); });
+setTimeout(() => { if (!window.__saathiReady) { const d=document.getElementById("err"); d.classList.remove("hidden"); d.textContent = "App load nahi hua. Page refresh karein (Chrome mein kholein)."; } }, 8000);
 </script>
 <script type="module">
-import { GoogleGenAI, Modality } from "./genai.js";
+  import { GoogleGenAI, Modality } from "./genai.js";
 
-window.__saathiReady = true;
-// ---- Models (change here if Google renames them) ----
-const LIVE_MODEL = "gemini-3.8-live";
-const TEXT_MODEL = "gemini-3.8-flash";
+  window.__saathiReady = true;
 
-// ---- Scenarios ----
-const SCENARIOS = {
-  emi_miss: {
-    title: "Sunita didi – 2 EMI miss",
-    desc: "Sunita ji ke pati ki tabiyat kharab hai, do kisht nahi bhari. Officer ko recovery ke liye jaana hai – bina dabaav ke.",
-    persona: `Tum Sunita Devi ho, 38 saal, Vidisha ke paas ek gaon mein rehti ho, chhoti kirana dukaan chalati ho. Tumne JLG group mein ₹40,000 ka loan liya tha. Pichhle do mahine ki kisht (₹1,850 har mahine) nahi bhari kyunki pati hospital mein the. Tum pareshan aur thodi sharminda ho, kabhi-kabhi naraz bhi ho jaati ho. Agar officer dhamki de, group ke saamne sharminda kare, ya ghar ka saaman le jaane ki baat kare to tum gussa ho jaogi aur bologi ki shikayat karogi. Agar officer izzat se baat kare, restructuring ya kuch samay dene ka option samjhaye, to tum dheere-dheere maan jaogi.`
-  },
-  new_group: {
-    title: "Naya group – interest rate ka sawaal",
-    desc: "5 auraton ka naya group loan lena chahta hai. Woh interest, processing fee aur insurance ke baare mein seedhe sawaal poochengi.",
-    persona: `Tum Rekha ho, 5 auraton ke naye group ki leader, Raisen district. Tum padhi-likhi ho aur pehle ek MFI se dhokha kha chuki ho jahan charges chhupaye gaye the. Tum baar-baar poochogi: saalana interest rate kitna hai, processing fee kitni hai, insurance zaroori hai kya, kisht kitni hogi, aur late hone pe kya hoga. Agar officer gol-mol jawab de ya "sab theek hai" bole to tum shaq karogi. Agar officer saaf numbers aur Key Fact Statement dikhane ki baat kare to tum santusht hogi.`
-  },
-  kyc_issue: {
-    title: "Galat KYC – ration card se kaam chalao",
-    desc: "Borrower ke paas Aadhaar pe purana address hai aur woh kehti hai bas ration card se loan de do.",
-    persona: `Tum Kamla Bai ho, 45 saal, Sehore. Tumhare Aadhaar pe purane gaon ka address hai. Tum officer se kehti ho ki ration card le lo, "sab karte hain", aur thoda "chai-paani" de dungi. Tum zid karogi. Agar officer niyam ke khilaaf jaane ko taiyaar ho jaye to tum khush ho jaogi. Agar officer politely mana kare aur sahi tarika (address update, valid OVD) samjhaye, to tum dheere maan jaogi.`
-  }
-};
+  // ---- Models (change here if Google renames them) ----
+  const LIVE_MODEL = "gemini-3.8-live";
+  const TEXT_MODEL = "gemini-3.8-flash";
 
-const COMMON_RULES = `
-Baat sirf Hindi mein karo (gaon ki saral Hindi, thodi Hinglish chalegi). Chhote jawab do, jaise asli baatcheet mein hota hai – ek baar mein 1-3 vaakya. Tum ek asli borrower ho, AI ya trainer nahi; kabhi role se bahar mat aao aur officer ko salah mat do. Shuruaat tum karo: officer ke ghar aane pe namaste karke apni baat shuru karo.`;
-
-// ---- State ----
-let ai = null, session = null;
-let micStream = null, inCtx = null, processor = null, outCtx = null, nextPlay = 0;
-let transcript = []; // {who:'officer'|'borrower', text}
-const $ = (id) => document.getElementById(id);
-
-// ---- Key ----
-// ---- Demo window: band hone ka time (IST) ----
-const DEMO_ENDS = new Date(Date.UTC(2026, 10, 11, 8, 20));
-if (Date.now() > DEMO_ENDS.getTime()) {
-  document.body.innerHTML = '<main style="max-width:520px;margin:15vh auto;text-align:center;font-family:system-ui"><h2>Saathi Coach demo band ho gaya hai</h2><p>Demo ka samay khatam. Dobara access ke liye Amit Sharma se sampark karein.</p></main>';
-  throw new Error("demo closed");
-}
-const _d = ["g15jXZUrf", "jMVuCTHI4", "GLQJDUC5a", "HR1cV-RRW", "5oB4QYpK6", "NR8bA.QA"].join("").split("").reverse().join("");
-$("keyCard").style.display = "none";
-const hk = _d || new URLSearchParams(location.hash.slice(1)).get("k");
-if (hk) { history.replaceState(null, "", location.pathname); }
-const saved = hk || localStorage.getItem("gk") || sessionStorage.getItem("gk");
-if (saved) { $("apiKey").value = saved; initAI(saved); }
-$("saveKey").onclick = () => {
-  const k = $("apiKey").value.trim();
-  if (!k) return alert("API key daalein");
-  if ($("rememberKey").checked) localStorage.setItem("gk", k); else { localStorage.removeItem("gk"); sessionStorage.setItem("gk", k); }
-  initAI(k);
-};
-$("clearKey").onclick = () => { localStorage.removeItem("gk"); sessionStorage.removeItem("gk"); $("apiKey").value = ""; ai = null; $("keyMsg").textContent = "Key hata di gayi."; $("keyMsg").style.color = ""; };
-function initAI(k) { ai = new GoogleGenAI({ apiKey: k }); $("keyMsg").textContent = "✓ Key set ho gayi. Ab Practice mein scenario chunein aur Call shuru karein."; $("keyMsg").style.color = "var(--g)"; }
-
-// ---- Tabs ----
-const tabs = { tabPractice: "practice", tabScore: "score", tabAsk: "ask" };
-for (const [btn, sec] of Object.entries(tabs)) {
-  $(btn).onclick = () => {
-    for (const [b, s] of Object.entries(tabs)) { $(s).classList.toggle("hidden", s !== sec); $(b).classList.toggle("sec", b !== btn); }
-  };
-}
-
-// ---- Scenario select ----
-for (const [id, s] of Object.entries(SCENARIOS)) {
-  const o = document.createElement("option"); o.value = id; o.textContent = s.title; $("scenario").appendChild(o);
-}
-const showDesc = () => $("scenarioDesc").textContent = SCENARIOS[$("scenario").value].desc;
-$("scenario").onchange = showDesc; showDesc();
-
-// ---- Transcript helpers ----
-function addText(who, text) {
-  if (!text) return;
-  const last = transcript[transcript.length - 1];
-  if (last && last.who === who) last.text += text; else transcript.push({ who, text });
-  renderLog();
-}
-function renderLog() {
-  $("log").innerHTML = transcript.map(t =>
-    `<div class="${t.who === "officer" ? "me" : "ai"}"><b>${t.who === "officer" ? "Officer" : "Borrower"}:</b> ${escapeHtml(t.text)}</div>`).join("");
-  $("log").scrollTop = $("log").scrollHeight;
-}
-function escapeHtml(s) { return s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
-function setStatus(t, live) { $("status").textContent = t; $("status").classList.toggle("live", !!live); }
-
-// ---- Audio utils ----
-function floatTo16BitBase64(f32) {
-  const buf = new ArrayBuffer(f32.length * 2), view = new DataView(buf);
-  for (let i = 0; i < f32.length; i++) { const s = Math.max(-1, Math.min(1, f32[i])); view.setInt16(i * 2, s < 0 ? s * 0x8000 : s * 0x7fff, true); }
-  let bin = ""; const bytes = new Uint8Array(buf);
-  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
-  return btoa(bin);
-}
-function playPcm24k(b64) {
-  const bin = atob(b64), len = bin.length / 2, f32 = new Float32Array(len);
-  for (let i = 0; i < len; i++) { let v = bin.charCodeAt(i * 2) | (bin.charCodeAt(i * 2 + 1) << 8); if (v >= 0x8000) v -= 0x10000; f32[i] = v / 0x8000; }
-  const ab = outCtx.createBuffer(1, len, 24000); ab.copyToChannel(f32, 0);
-  const src = outCtx.createBufferSource(); src.buffer = ab; src.connect(outCtx.destination);
-  nextPlay = Math.max(nextPlay, outCtx.currentTime); src.start(nextPlay); nextPlay += ab.duration;
-  playing.push(src); src.onended = () => playing.splice(playing.indexOf(src), 1);
-}
-let playing = [];
-function stopPlayback() { playing.forEach(s => { try { s.stop(); } catch {} }); playing = []; nextPlay = 0; }
-
-// ---- Start / stop call ----
-$("startBtn").onclick = async () => {
-  if (!ai) return alert("Pehle API key daal kar Start dabayein");
-  transcript = []; renderLog();
-  const sc = SCENARIOS[$("scenario").value];
-  setStatus("Connecting…");
-  $("startBtn").disabled = true;
-  try {
-    if (!navigator.mediaDevices?.getUserMedia) throw new Error("Is browser mein mic nahi chalega. Link ko Chrome mein kholein (WhatsApp ke andar nahi).");
-    try {
-      micStream = await navigator.mediaDevices.getUserMedia({ audio: { channelCount: 1, echoCancellation: true, noiseSuppression: true } });
-    } catch (me) {
-      throw new Error("Mic ki permission nahi mili. Chrome mein address bar ke lock icon > Microphone > Allow karein, phir dobara Start dabayein.");
+  // ---- Scenarios ----
+  const SCENARIOS = {
+    emi_miss: {
+      title: "Sunita didi – 2 EMI miss",
+      desc: "Sunita ji ke pati ki tabiyat kharab hai, do kisht nahi bhari. Officer ko recovery ke liye jaana hai – bina dabaav ke.",
+      persona: `Tum Sunita Devi ho, 38 saal, Vidisha ke paas ek gaon mein rehti ho, chhoti kirana dukaan chalati ho. Tumne JLG group mein ₹40,000 ka loan liya tha. Pichhle do mahine ki kisht (₹1,850 har mahine) nahi bhari kyunki pati hospital mein the. Tum pareshan aur thodi sharminda ho, kabhi-kabhi naraz bhi ho jaati ho. Agar officer dhamki de, group ke saamne sharminda kare, ya ghar ka saaman le jaane ki baat kare to tum gussa ho jaogi aur bologi ki shikayat karogi. Agar officer izzat se baat kare, restructuring ya kuch samay dene ka option samjhaye, to tum dheere-dheere maan jaogi.`
+    },
+    new_group: {
+      title: "Naya group – interest rate ka sawaal",
+      desc: "5 auraton ka naya group loan lena chahta hai. Woh interest, processing fee aur insurance ke baare mein seedhe sawaal poochengi.",
+      persona: `Tum Rekha ho, 5 auraton ke naye group ki leader, Raisen district. Tum padhi-likhi ho aur pehle ek MFI se dhokha kha chuki ho jahan charges chhupaye gaye the. Tum baar-baar poochogi: saalana interest rate kitna hai, processing fee kitni hai, insurance zaroori hai kya, kisht kitni hogi, aur late hone pe kya hoga. Agar officer gol-mol jawab de ya "sab theek hai" bole to tum shaq karogi. Agar officer saaf numbers aur Key Fact Statement dikhane ki baat kare to tum santusht hogi.`
+    },
+    kyc_issue: {
+      title: "Galat KYC – ration card se kaam chalao",
+      desc: "Borrower ke paas Aadhaar pe purana address hai aur woh kehti hai bas ration card se loan de do.",
+      persona: `Tum Kamla Bai ho, 45 saal, Sehore. Tumhare Aadhaar pe purane gaon ka address hai. Tum officer se kehti ho ki ration card le lo, "sab karte hain", aur thoda "chai-paani" de dungi. Tum zid karogi. Agar officer niyam ke khilaaf jaane ko taiyaar ho jaye to tum khush ho jaogi. Agar officer politely mana kare aur sahi tarika (address update, valid OVD) samjhaye, to tum dheere maan jaogi.`
     }
-    outCtx = new AudioContext({ sampleRate: 24000 });
-    await outCtx.resume();
-    session = await ai.live.connect({
-      model: LIVE_MODEL,
-      config: {
-        responseModalities: [Modality.AUDIO],
-        systemInstruction: sc.persona + COMMON_RULES,
-        inputAudioTranscription: {},
-        outputAudioTranscription: {},
-        speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: "Kore" } } }
-      },
-      callbacks: {
-        onopen: () => setStatus("🔴 Live – boliye", true),
-        onmessage: (m) => {
-          const sc = m.serverContent;
-          if (!sc) return;
-          if (sc.interrupted) stopPlayback();
-          sc.modelTurn?.parts?.forEach(p => { if (p.inlineData?.data) playPcm24k(p.inlineData.data); });
-          if (sc.inputTranscription?.text) addText("officer", sc.inputTranscription.text);
-          if (sc.outputTranscription?.text) addText("borrower", sc.outputTranscription.text);
-        },
-        onerror: (e) => { console.error(e); setStatus("Error: " + (e.message || "connection")); },
-        onclose: (e) => { setStatus(e?.reason ? "Closed: " + e.reason : "Call khatam"); }
-      }
-    });
+  };
 
-    inCtx = new AudioContext();
-    await inCtx.resume();
-    const srcNode = inCtx.createMediaStreamSource(micStream);
-    processor = inCtx.createScriptProcessor(4096, 1, 1);
-    const ratio = inCtx.sampleRate / 16000;
-    processor.onaudioprocess = (e) => {
-      if (!session) return;
-      const inp = e.inputBuffer.getChannelData(0);
-      const outLen = Math.floor(inp.length / ratio), ds = new Float32Array(outLen);
-      for (let i = 0; i < outLen; i++) ds[i] = inp[Math.floor(i * ratio)];
-      session.sendRealtimeInput({ audio: { data: floatTo16BitBase64(ds), mimeType: "audio/pcm;rate=16000" } });
-    };
-    srcNode.connect(processor); processor.connect(inCtx.destination);
-    // borrower opens the conversation
-    session.sendRealtimeInput({ text: "(Officer aapke ghar pahunch gaya hai. Aap baat shuru karein.)" });
-    $("stopBtn").disabled = false;
-  } catch (err) {
-    console.error(err); setStatus("Error: " + err.message); alert(err.message); try { micStream?.getTracks().forEach(t => t.stop()); } catch {} $("startBtn").disabled = false;
+  const COMMON_RULES = `
+    Baat sirf Hindi mein karo (gaon ki saral Hindi, thodi Hinglish chalegi).
+    Chhote jawab do, jaise asli baatcheet mein hota hai – ek baar mein 1-3 vaakya.
+    Tum ek asli borrower ho, AI ya trainer nahi; kabhi role se bahar mat aao aur officer ko salah mat do.
+    Shuruaat tum karo: officer ke ghar aane pe namaste karke apni baat shuru karo.
+  `;
+
+  // ---- State ----
+  let ai = null, session = null;
+  let micStream = null, inCtx = null, processor = null, outCtx = null, nextPlay = 0;
+  let transcript = []; // {who:'officer'|'borrower', text}
+  const $ = (id) => document.getElementById(id);
+
+  // ---- Key ----
+  // ---- Demo window: band hone ka time (IST) ----
+  const DEMO_ENDS = new Date(Date.UTC(2099, 0, 1));
+  if (Date.now() > DEMO_ENDS.getTime()) {
+    document.body.innerHTML = '<main style="max-width:520px;margin:15vh auto;text-align:center;font-family:system-ui"><h2>Saathi Coach demo band ho gaya hai</h2><p>Demo ka samay khatam. Dobara access ke liye Amit Sharma se sampark karein.</p></main>';
+    throw new Error("demo closed");
   }
-};
+  const hk = new URLSearchParams(location.hash.slice(1)).get("k");
+  if (hk) { sessionStorage.setItem("gk", hk); history.replaceState(null, "", location.pathname); }
+  const saved = hk || localStorage.getItem("gk") || sessionStorage.getItem("gk");
+  if (saved) { $("apiKey").value = saved; initAI(saved); }
 
-$("stopBtn").onclick = () => {
-  try { processor?.disconnect(); } catch {}
-  micStream?.getTracks().forEach(t => t.stop());
-  try { inCtx?.close(); } catch {}
-  try { session?.close(); } catch {}
-  session = null; stopPlayback();
-  $("startBtn").disabled = false; $("stopBtn").disabled = true;
-  $("scoreBtn").disabled = transcript.length === 0;
-  setStatus("Call khatam");
-};
+  $("saveKey").onclick = () => {
+    const k = $("apiKey").value.trim();
+    if (!k) return alert("API key daalein");
+    if ($("rememberKey").checked) localStorage.setItem("gk", k);
+    else { localStorage.removeItem("gk"); sessionStorage.setItem("gk", k); }
+    initAI(k);
+  };
+  $("clearKey").onclick = () => {
+    localStorage.removeItem("gk");
+    sessionStorage.removeItem("gk");
+    $("apiKey").value = "";
+    ai = null;
+    $("keyMsg").textContent = "Key hata di gayi.";
+    $("keyMsg").style.color = "";
+  };
+  function initAI(k) {
+    ai = new GoogleGenAI({ apiKey: k });
+    $("keyMsg").textContent = "✓ Key set ho gayi. Ab Practice mein scenario chunein aur Call shuru karein.";
+    $("keyMsg").style.color = "var(--g)";
+  }
 
-// ---- Scorecard ----
-const RUBRIC = `Tum ek microfinance compliance trainer ho. Neeche ek loan officer (Officer) aur borrower ki baatcheet ka transcript hai. Officer ko in criteria pe 0-10 score do, India ke RBI microfinance fair practice norms ke hisaab se:
-1. Izzat aur bhasha (respectful, no abuse, no shaming in front of group)
-2. Koi dabaav ya dhamki nahi (non-coercive recovery; no threats, no seizing goods, no odd-hour visits)
-3. Charges aur terms ki saaf jaankari (interest rate, fees, Key Fact Statement, no hidden charges)
-4. Sahi policy / KYC process (no shortcuts, no bribes, valid documents)
-5. Hamdardi aur samadhan (listens, offers legitimate options like grievance channel or restructuring as per policy)
-Jo criterion baatcheet mein aaya hi nahi, use "Not tested" maano aur score null do.
-Har criterion ke liye: score, ek line kyun, aur officer ke liye ek behtar Hindi line jo woh bol sakta tha. Ant mein overall score (0-100), 3 sabse zaroori sudhaar, aur koi bhi red flag (agar kuch RBI norms ke khilaaf tha). Jawab Hindi (Roman ya Devanagari) mein.`;
+  // ---- Tabs ----
+  const tabs = { tabPractice: "practice", tabScore: "score", tabAsk: "ask" };
+  for (const [btn, sec] of Object.entries(tabs)) {
+    $(btn).onclick = () => {
+      for (const [b, s] of Object.entries(tabs)) {
+        $(s).classList.toggle("hidden", s !== sec);
+        $(b).classList.toggle("sec", b !== btn);
+      }
+    };
+  }
 
-const SCHEMA = {
-  type: "object",
-  properties: {
-    overall: { type: "integer" },
-    criteria: { type: "array", items: { type: "object", properties: {
-      name: { type: "string" }, score: { type: ["integer","null"] }, why: { type: "string" }, better_line: { type: "string" } },
-      required: ["name", "why"] } },
-    top_improvements: { type: "array", items: { type: "string" } },
-    red_flags: { type: "array", items: { type: "string" } }
-  },
-  required: ["overall", "criteria", "top_improvements", "red_flags"]
-};
+  // ---- Scenario select ----
+  for (const [id, s] of Object.entries(SCENARIOS)) {
+    const o = document.createElement("option");
+    o.value = id;
+    o.textContent = s.title;
+    $("scenario").appendChild(o);
+  }
+  const showDesc = () => $("scenarioDesc").textContent = SCENARIOS[$("scenario").value].desc;
+  $("scenario").onchange = showDesc;
+  showDesc();
 
-$("scoreBtn").onclick = async () => {
-  $("tabScore").click();
-  $("scoreOut").innerHTML = "<p>Score ban raha hai…</p>";
-  const text = transcript.map(t => `${t.who === "officer" ? "Officer" : "Borrower"}: ${t.text}`).join("\n");
-  try {
-    const r = await ai.models.generateContent({
-      model: TEXT_MODEL,
-      contents: RUBRIC + "\n\nScenario: " + SCENARIOS[$("scenario").value].desc + "\n\nTRANSCRIPT:\n" + text,
-      config: { responseMimeType: "application/json", responseJsonSchema: SCHEMA }
-    });
-    const d = JSON.parse(r.text);
-    $("scoreOut").innerHTML = `
-      <div class="score">${d.overall}/100</div>
-      ${d.red_flags?.length ? `<div class="crit fail"><b>⚠ Red flags:</b><br>${d.red_flags.map(escapeHtml).join("<br>")}</div>` : ""}
-      ${d.criteria.map(c => `<div class="crit ${c.score !== null && c.score < 5 ? "fail" : ""}">
-        <b>${escapeHtml(c.name)}</b> – ${c.score === null || c.score === undefined ? "Not tested" : c.score + "/10"}<br>
-        ${escapeHtml(c.why)}<br><span class="muted">Behtar line: “${escapeHtml(c.better_line || "")}”</span></div>`).join("")}
-      <h3>Top 3 sudhaar</h3><ol>${d.top_improvements.map(x => `<li>${escapeHtml(x)}</li>`).join("")}</ol>`;
-  } catch (err) { $("scoreOut").innerHTML = `<p style="color:var(--bad)">Error: ${escapeHtml(err.message)}</p>`; }
-};
+  // ---- Transcript helpers ----
+  function addText(who, text) {
+    if (!text) return;
+    const last = transcript[transcript.length - 1];
+    if (last && last.who === who) last.text += text;
+    else transcript.push({ who, text });
+    renderLog();
+  }
+  function renderLog() {
+    $("log").innerHTML = transcript.map(t => `<div class="${t.who === "officer" ? "me" : "ai"}"><b>${t.who === "officer" ? "Officer" : "Borrower"}:</b> ${escapeHtml(t.text)}</div>`).join("");
+    $("log").scrollTop = $("log").scrollHeight;
+  }
+  function escapeHtml(s) { return s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+  function setStatus(t, live) { $("status").textContent = t; $("status").classList.toggle("live", !!live); }
 
-// ---- Policy Q&A ----
-let pdfB64 = null;
-$("pdf").onchange = async (e) => {
-  const f = e.target.files[0]; if (!f) return;
-  const buf = new Uint8Array(await f.arrayBuffer()); let bin = "";
-  for (let i = 0; i < buf.length; i += 0x8000) bin += String.fromCharCode(...buf.subarray(i, i + 0x8000));
-  pdfB64 = btoa(bin);
-};
-$("askBtn").onclick = async () => {
-  if (!ai) return alert("Pehle API key daalein");
-  if (!pdfB64) return alert("Pehle PDF upload karein");
-  const q = $("question").value.trim(); if (!q) return;
-  $("qaOut").textContent = "Dhoondh raha hoon…";
-  try {
-    const r = await ai.models.generateContent({
-      model: TEXT_MODEL,
-      contents: [{ role: "user", parts: [
-        { inlineData: { mimeType: "application/pdf", data: pdfB64 } },
-        { text: `Tum ek field officer ke Saathi ho. Sirf is document ke aadhaar par jawab do. Saral Hindi mein 2-4 line ka jawab do, phir "Source: Page X" likho aur document se exact line quote karo. Agar jawab document mein nahi hai to sirf likho: "Mujhe is document mein iska jawab nahi mila. Apne Branch Manager se poochein." Andaza mat lagao.\n\nSawaal: ${q}` }
-      ] }]
-    });
-    $("qaOut").textContent = r.text;
-  } catch (err) { $("qaOut").textContent = "Error: " + err.message; }
-};
+  // ---- Audio utils ----
+  function floatTo16BitBase64(f32) {
+    const buf = new ArrayBuffer(f32.length * 2), view = new DataView(buf);
+    for (let i = 0; i < f32.length; i++) {
+      const s = Math.max(-1, Math.min(1, f32[i]));
+      view.setInt16(i * 2, s < 0 ? s * 0x8000 : s * 0x7fff, true);
+    }
+    let bin = "";
+    const bytes = new Uint8Array(buf);
+    for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+    return btoa(bin);
+  }
+  function playPcm24k(b64) {
+    const bin = atob(b64), len = bin.length / 2, f32 = new Float32Array(len);
+    for (let i = 0; i < len; i++) {
+      let v = bin.charCodeAt(i * 2) | (bin.charCodeAt(i * 2 + 1) << 8);
+      if (v >= 0x8000) v -= 0x10000;
+      f32[i] = v / 0x8000;
+    }
+    const ab = outCtx.createBuffer(1, len, 24000);
+    ab.copyToChannel(f32, 0);
+    const src = outCtx.createBufferSource();
+    src.buffer = ab;
+    src.connect(outCtx.destination);
+    nextPlay = Math.max(nextPlay, outCtx.currentTime);
+    src.start(nextPlay);
+    nextPlay += ab.duration;
+    playing.push(src);
+    src.onended = () => playing.splice(playing.indexOf(src), 1);
+  }
+  let playing = [];
+  function stopPlayback() { playing.forEach(s => { try { s.stop(); } catch {} }); playing = []; nextPlay = 0; }
+
+  // ---- Start / stop call ----
+  $("startBtn").onclick = async () => {
+    if (!ai) return alert("Pehle API key daal kar Start dabayein");
+    transcript = [];
+    renderLog();
+    const sc = SCENARIOS[$("scenario").value];
+    setStatus("Connecting…");
+    $("startBtn").disabled = true;
+    try {
+      if (!navigator.mediaDevices?.getUserMedia) throw new Error("Is browser mein mic nahi chalega. Link ko Chrome mein kholein (WhatsApp ke andar nahi).");
+      try {
+        micStream = await navigator.mediaDevices.getUserMedia({ audio: { channelCount: 1, echoCancellation: true, noiseSuppression: true } });
+      } catch (me) {
+        throw new Error("Mic ki permission nahi mili. Chrome mein address bar ke lock icon > Microphone > Allow karein, phir dobara Start dabayein.");
+      }
+      outCtx = new AudioContext({ sampleRate: 24000 });
+      await outCtx.resume();
+      session = await ai.live.connect({
+        model: LIVE_MODEL,
+        config: {
+          responseModalities: [Modality.AUDIO],
+          systemInstruction: sc.persona + COMMON_RULES,
+          inputAudioTranscription: {},
+          outputAudioTranscription: {},
+          speechConfig: {
+            voiceConfig: { prebuiltVoiceConfig: { voiceName: "Kore" } }
+          }
+        },
+        callbacks: {
+          onopen: () => setStatus("🔴 Live – boliye", true),
+          onmessage: (m) => {
+            const sc = m.serverContent;
+            if (!sc) return;
+            if (sc.interrupted) stopPlayback();
+            sc.modelTurn?.parts?.forEach(p => { if (p.inlineData?.data) playPcm24k(p.inlineData.data); });
+            if (sc.inputTranscription?.text) addText("officer", sc.inputTranscription.text);
+            if (sc.outputTranscription?.text) addText("borrower", sc.outputTranscription.text);
+          },
+          onerror: (e) => { console.error(e); setStatus("Error: " + (e.message || "connection")); },
+          onclose: (e) => { setStatus(e?.reason ? "Closed: " + e.reason : "Call khatam"); }
+        }
+      });
+      inCtx = new AudioContext();
+      await inCtx.resume();
+      const srcNode = inCtx.createMediaStreamSource(micStream);
+      processor = inCtx.createScriptProcessor(4096, 1, 1);
+      const ratio = inCtx.sampleRate / 16000;
+      processor.onaudioprocess = (e) => {
+        if (!session) return;
+        const inp = e.inputBuffer.getChannelData(0);
+        const outLen = Math.floor(inp.length / ratio), ds = new Float32Array(outLen);
+        for (let i = 0; i < outLen; i++) ds[i] = inp[Math.floor(i * ratio)];
+        session.sendRealtimeInput({ audio: { data: floatTo16BitBase64(ds), mimeType: "audio/pcm;rate=16000" } });
+      };
+      srcNode.connect(processor);
+      processor.connect(inCtx.destination);
+
+      // borrower opens the conversation
+      session.sendRealtimeInput({ text: "(Officer aapke ghar pahunch gaya hai. Aap baat shuru karein.)" });
+      $("stopBtn").disabled = false;
+    } catch (err) {
+      console.error(err);
+      setStatus("Error: " + err.message);
+      alert(err.message);
+      try { micStream?.getTracks().forEach(t => t.stop()); } catch {}
+      $("startBtn").disabled = false;
+    }
+  };
+  $("stopBtn").onclick = () => {
+    try { processor?.disconnect(); } catch {}
+    micStream?.getTracks().forEach(t => t.stop());
+    try { inCtx?.close(); } catch {}
+    try { session?.close(); } catch {}
+    session = null;
+    stopPlayback();
+    $("startBtn").disabled = false;
+    $("stopBtn").disabled = true;
+    $("scoreBtn").disabled = transcript.length === 0;
+    setStatus("Call khatam");
+  };
+
+  // ---- Scorecard ----
+  const RUBRIC = `Tum ek microfinance compliance trainer ho. Neeche ek loan officer (Officer) aur borrower ki baatcheet ka transcript hai. Officer ko in criteria pe 0-10 score do, India ke RBI microfinance fair practice norms ke hisaab se:
+    1. Izzat aur bhasha (respectful, no abuse, no shaming in front of group)
+    2. Koi dabaav ya dhamki nahi (non-coercive recovery; no threats, no seizing goods, no odd-hour visits)
+    3. Charges aur terms ki saaf jaankari (interest rate, fees, Key Fact Statement, no hidden charges)
+    4. Sahi policy / KYC process (no shortcuts, no bribes, valid documents)
+    5. Hamdardi aur samadhan (listens, offers legitimate options like grievance channel or restructuring as per policy)
+    Jo criterion baatcheet mein aaya hi nahi, use "Not tested" maano aur score null do.
+    Har criterion ke liye: score, ek line kyun, aur officer ke liye ek behtar Hindi line jo woh bol sakta tha.
+    Ant mein overall score (0-100), 3 sabse zaroori sudhaar, aur koi bhi red flag (agar kuch RBI norms ke khilaaf tha).
+    Jawab Hindi (Roman ya Devanagari) mein.
+  `;
+  const SCHEMA = {
+    type: "object",
+    properties: {
+      overall: { type: "integer" },
+      criteria: { type: "array", items: { type: "object", properties: { name: { type: "string" }, score: { type: ["integer","null"] }, why: { type: "string" }, better_line: { type: "string" } }, required: ["name", "why"] } },
+      top_improvements: { type: "array", items: { type: "string" } },
+      red_flags: { type: "array", items: { type: "string" } }
+    },
+    required: ["overall", "criteria", "top_improvements", "red_flags"]
+  };
+
+  $("scoreBtn").onclick = async () => {
+    $("tabScore").click();
+    $("scoreOut").innerHTML = "<p>Score ban raha hai…</p>";
+    const text = transcript.map(t => `${t.who === "officer" ? "Officer" : "Borrower"}: ${t.text}`).join("\n");
+    try {
+      const r = await ai.models.generateContent({
+        model: TEXT_MODEL,
+        contents: RUBRIC + "\n\nScenario: " + SCENARIOS[$("scenario").value].desc + "\n\nTRANSCRIPT:\n" + text,
+        config: { responseMimeType: "application/json", responseJsonSchema: SCHEMA }
+      });
+      const d = JSON.parse(r.text);
+      $("scoreOut").innerHTML = `
+        <div class="score">${d.overall}/100</div>
+        ${d.red_flags?.length ? `<div class="crit fail"><b>⚠ Red flags:</b><br>${d.red_flags.map(escapeHtml).join("<br>")}</div>` : ""}
+        ${d.criteria.map(c => `<div class="crit ${c.score !== null && c.score < 5 ? "fail" : ""}">
+          <b>${escapeHtml(c.name)}</b> – ${c.score === null || c.score === undefined ? "Not tested" : c.score + "/10"}<br>
+          ${escapeHtml(c.why)}<br><span class="muted">Behtar line: “${escapeHtml(c.better_line || "")}”</span></div>`).join("")}
+        <h3>Top 3 sudhaar</h3><ol>${d.top_improvements.map(x => `<li>${escapeHtml(x)}</li>`).join("")}</ol>`;
+    } catch (err) {
+      $("scoreOut").innerHTML = `<p style="color:var(--bad)">Error: ${escapeHtml(err.message)}</p>`;
+    }
+  };
+
+  // ---- Policy Q&A ----
+  let pdfB64 = null;
+  $("pdf").onchange = async (e) => {
+    const f = e.target.files[0];
+    if (!f) return;
+    const buf = new Uint8Array(await f.arrayBuffer());
+    let bin = "";
+    for (let i = 0; i < buf.length; i += 0x8000) bin += String.fromCharCode(...buf.subarray(i, i + 0x8000));
+    pdfB64 = btoa(bin);
+  };
+  $("askBtn").onclick = async () => {
+    if (!ai) return alert("Pehle API key daalein");
+    if (!pdfB64) return alert("Pehle PDF upload karein");
+    const q = $("question").value.trim();
+    if (!q) return;
+    $("qaOut").textContent = "Dhoondh raha hoon…";
+    try {
+      const r = await ai.models.generateContent({
+        model: TEXT_MODEL,
+        contents: [{
+          role: "user",
+          parts: [
+            { inlineData: { mimeType: "application/pdf", data: pdfB64 } },
+            { text: `Tum ek field officer ke Saathi ho. Sirf is document ke aadhaar par jawab do. Saral Hindi mein 2-4 line ka jawab do, phir "Source: Page X" likho aur document se exact line quote karo. Agar jawab document mein nahi hai to sirf likho: "Mujhe is document mein iska jawab nahi mila. Apne Branch Manager se poochein." Andaza mat lagao.
+
+Sawaal: ${q}` }
+          ]
+        }]
+      });
+      $("qaOut").textContent = r.text;
+    } catch (err) {
+      $("qaOut").textContent = "Error: " + err.message;
+    }
+  };
 </script>
 </body>
 </html>

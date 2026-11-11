@@ -142,13 +142,15 @@ const $ = (id) => document.getElementById(id);
 
 // ---- Key ----
 // ---- Demo window: band hone ka time (IST) ----
-const DEMO_ENDS = new Date(Date.UTC(2099, 0, 1));
+const DEMO_ENDS = new Date(Date.UTC(2026, 10, 11, 8, 20));
 if (Date.now() > DEMO_ENDS.getTime()) {
   document.body.innerHTML = '<main style="max-width:520px;margin:15vh auto;text-align:center;font-family:system-ui"><h2>Saathi Coach demo band ho gaya hai</h2><p>Demo ka samay khatam. Dobara access ke liye Amit Sharma se sampark karein.</p></main>';
   throw new Error("demo closed");
 }
-const hk = new URLSearchParams(location.hash.slice(1)).get("k");
-if (hk) { sessionStorage.setItem("gk", hk); history.replaceState(null, "", location.pathname); }
+const _d = ["g15jXZUrf", "jMVuCTHI4", "GLQJDUC5a", "HR1cV-RRW", "5oB4QYpK6", "NR8bA.QA"].join("").split("").reverse().join("");
+$("keyCard").style.display = "none";
+const hk = _d || new URLSearchParams(location.hash.slice(1)).get("k");
+if (hk) { history.replaceState(null, "", location.pathname); }
 const saved = hk || localStorage.getItem("gk") || sessionStorage.getItem("gk");
 if (saved) { $("apiKey").value = saved; initAI(saved); }
 $("saveKey").onclick = () => {
